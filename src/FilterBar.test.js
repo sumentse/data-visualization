@@ -1,9 +1,9 @@
 import React from 'react';
 import {shallow} from 'enzyme';
-import App from './App';
+import FilterBar from './FilterBar';
 
 const setup = (props)=>{
-  return shallow(<App {...props}/>);
+  return shallow(<FilterBar {...props}/>);
 };
 
 it('renders without error', ()=>{
