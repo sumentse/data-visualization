@@ -54,13 +54,20 @@ class FilterBar extends Component {
 
   handleSubmit(event){
     event.preventDefault();
-    console.log(this.state);
+    
+    const query = ({
+      ...(this.state.currencySelected === 'All' || {currency: this.state.currencySelected}),
+      ...(this.state.lpSelected === 'All' || {lp: this.state.lpSelected})
+    });
+
+    this.props.updateChartData(query);
+
   }
 
   render() {
     
     return (
-      <div className='container mt-m'>
+      <div className='mt-m'>
         <Row>
           <form onSubmit={(e)=>this.handleSubmit(e)}>
             <Input s={6}

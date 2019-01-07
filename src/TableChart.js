@@ -16,8 +16,9 @@ class TableChart extends Component {
   constructor(props){
     super();
     this.state = {
-      data: []
-    }
+      data: [],
+      count: 0
+    };
 
   }
 
@@ -48,9 +49,10 @@ class TableChart extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.data !== this.props.data){
+    if(JSON.stringify(nextProps) !== JSON.stringify(this.props)){
       this.setState({
-        data: nextProps.data
+        data: nextProps.data,
+        count: nextProps.count
       });
     }
   }
@@ -79,15 +81,15 @@ class TableChart extends Component {
           <TableBody>
             {this.generateRows()}
           </TableBody>
-          {/* <TableFooter>
+          <TableFooter>
             <TablePagination rowsPerPageOptions={[100, 500, 1000]}
               colSpan={7}
-              count={1000}
+              count={this.props.count}
               rowsPerPage={100}
               onChangePage={this.handleChangePage}
               page={0}
             />
-          </TableFooter> */}
+          </TableFooter>
         </Table>
       );
   
@@ -96,11 +98,11 @@ class TableChart extends Component {
   
 };
 
-// TableChart.propTypes = {
-//   data: PropTypes.array.isRequired,
-//   rowsPerPage: PropTypes.number.isRequired,
-//   count: PropTypes.number.isRequired,
-//   page: PropTypes.number.isRequired
-// };
+TableChart.propTypes = {
+  data: PropTypes.array.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired
+};
 
 export default TableChart;

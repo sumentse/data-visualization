@@ -12,22 +12,31 @@ class App extends Component {
     super();
     this.state = {
       chartData: [],
-      chartType: 'table'
+      chartType: 'table',
+      paginationData: {}
     };
   }
 
   async componentDidMount(){
     const {data} = await axios.post('http://localhost:3000/charts/filter?currentPage=1&pageSize=100')
-    
     this.setState({
-      chartData: data.results
+      chartData: data.results,
+      paginationData: data.pagination
     });
   }
+
+  async updateChartData(query){
+    const {data} = await axios.post('http://localhost:3000/charts/filter?currentPage=1&pageSize=100', {...query});
+    this.setState({
+      chartData: data.results,
+      paginationData: data.pagination
+    });
+  };
 
   generateChart(){
     switch(this.state.chartType){
       case 'table':
-        return (<TableChart data={this.state.chartData}/>);
+        return (<TableChart data={this.state.chartData} count={this.state.paginationData.totalItems}/>);
       default:
         return (<TableChart data={this.state.chartData}/>); 
     }
@@ -37,7 +46,7 @@ class App extends Component {
     return (
       <div id="App" className="container-fluid">
         <Header brand="Coding Challege"/>
-        <FilterBar/>
+        <FilterBar updateChartData={(query)=>this.updateChartData(query)}/>
         {this.generateChart()}
       </div>
     );
