@@ -19,7 +19,8 @@ class TableChartContainer extends Component {
     this.state = {
       data: props.data,
       count: 0,
-      rowsPerPage: props.rowsPerPage
+      rowsPerPage: props.rowsPerPage,
+      page: 0
     };
 
   }
@@ -61,7 +62,19 @@ class TableChartContainer extends Component {
   }
 
   handleChangePage(event, page){
-    console.log(event,page);
+    
+    this.setState({
+      page: page
+    })
+
+    const {currency, lp} = this.props;
+
+    const query = ({
+      ...(currency === 'All' || {currency}),
+      ...(lp === 'All' || {lp})
+    });
+    
+    this.props.updateChartDataCallBack(query, this.state.rowsPerPage, page + 1);
   }
 
   handleChangeRowsPerPage(event){
@@ -69,7 +82,16 @@ class TableChartContainer extends Component {
     this.setState({
       rowsPerPage
     });
-    //calls the api in the root and pass the params
+    
+    const {currency, lp} = this.props;
+    
+    const query = ({
+      ...(currency === 'All' || {currency}),
+      ...(lp === 'All' || {lp})
+    });
+    
+    this.props.updateChartDataCallBack(query, rowsPerPage, this.state.page + 1);
+
   }
   
   render(){
@@ -98,13 +120,13 @@ class TableChartContainer extends Component {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TablePagination rowsPerPageOptions={[100, 500, 1000]}
+              <TablePagination rowsPerPageOptions={[100, 250, 500]}
                 colSpan={7}
                 count={this.props.count}
                 onChangePage={(e, pageNo)=>this.handleChangePage(e, pageNo)}
                 onChangeRowsPerPage={(e)=>this.handleChangeRowsPerPage(e)}
                 rowsPerPage={this.state.rowsPerPage}
-                page={this.props.page}
+                page={this.state.page}
                 SelectProps={{
                   native: true,
                 }}

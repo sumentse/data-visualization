@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import {Button, withStyles, MuiThemeProvider, createMuiTheme} from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
 
-const styles = (theme) => ({
+const styles = (theme) => {
+  return ({
   button: {
     margin: theme.spacing.unit,
     color: '#fff',
@@ -11,7 +12,8 @@ const styles = (theme) => ({
       background: blue[800]
     }
   }
-});
+})
+};
 
 const theme = createMuiTheme({
   palette: {
@@ -46,6 +48,12 @@ class VisualizationMenu extends Component {
             onClick={()=>this.props.changeChartCallback('line')}
             className={classes.button}>
             Line
+          </Button>
+          <Button variant="contained" 
+            color="primary" 
+            onClick={()=>this.props.changeChartCallback('area')}
+            className={classes.button}>
+            Area
           </Button>
         </MuiThemeProvider>
       </div>

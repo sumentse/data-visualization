@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
 import {
   ResponsiveContainer,
   LineChart,
   Line,
+  XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
@@ -14,21 +17,23 @@ class LineChartContainer extends Component {
     super();
     this.state = {
       data: props.data,
-      
     };
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (nextProps.data !== this.props.data) {
       this.setState({data: nextProps.data});
     }
   }
 
   formatData() {
-    return this.state.data.filter(({currency})=>this.props.currency === currency)
-      .map(({asking_price: askingPrice, bid_price: biddingPrice}) => {
-        return {askingPrice, biddingPrice}
+    return this.state.data
+      .map(({time_stamp:time, asking_price: askingPrice, bid_price: biddingPrice}) => {
+        return {
+          time:moment(time).format('HH:mm:ss'), 
+          askingPrice, 
+          biddingPrice
+        }
       });
   }
 
@@ -51,10 +56,11 @@ class LineChartContainer extends Component {
             left: 20,
             bottom: 5
           }}>
+            <XAxis dataKey="time" textAnchor="end" angle={-45} height={75}/>
             <YAxis type="number" domain={['dataMin', 'dataMax']}/>
             <CartesianGrid strokeDasharray="3 3"/>
             <Tooltip/>
-            <Legend/>
+            <Legend verticalAlign="top" height={36}/>
             <Line
               type="monotone"
               dataKey="askingPrice"
@@ -75,6 +81,10 @@ class LineChartContainer extends Component {
     }
 
   }
+};
+
+LineChartContainer.propTypes = {
+  data: PropTypes.array.isRequired
 };
 
 export default LineChartContainer;

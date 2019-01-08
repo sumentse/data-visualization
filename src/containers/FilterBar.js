@@ -18,7 +18,7 @@ class FilterBar extends Component {
 
   async componentDidMount() {
     const results = await axios.get('http://localhost:3000/charts/categories');
-    const {'currency':currencies, 'lp':lps} = results.data;
+    const {currency:currencies, lp:lps} = results.data;
 
     this.setState({currencies, lps});
 
