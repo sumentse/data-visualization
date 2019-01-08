@@ -1,8 +1,28 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Button, Row, Input} from 'react-materialize';
+import {Row, Input} from 'react-materialize';
 import SelectionList from '../components/SelectionList';
+import {Button, MuiThemeProvider, createMuiTheme} from '@material-ui/core';
+import green from '@material-ui/core/colors/green';
 
+const theme = createMuiTheme({
+  palette: {
+    primary: green
+  },
+  typography: {
+    useNextVariants: true,
+  },
+  overrides: {
+    MuiButton: {
+      containedPrimary: {
+        color: '#fff',
+        '&:focus': {
+          background: green[800]
+        }
+      },
+    }
+  }
+});
 
 class FilterBar extends Component {
   constructor(props) {
@@ -52,31 +72,38 @@ class FilterBar extends Component {
   render() {
     
     return (
-      <div className='mt-m'>
-        <Row>
-          <form onSubmit={(e)=>this.handleSubmit(e)}>
-            <Input s={6}
-                onChange={(e,value)=>this.onCurrencyChange(value)}
-                type='select' 
-                label='Currency'
-                defaultValue='All'>
-              <option value='All'>All</option>
-              <SelectionList lists={this.state.currencies} />
-            </Input>
-            <Input s={6}
-                onChange={(e,value)=>this.onLPChange(value)}
-                type='select'
-                label='LP'
-                defaultValue='All'>
-              <option value='All'>All</option>
-              <SelectionList lists={this.state.lps} />
-            </Input>
-            <div className='center-align'>
-              <Button className="green" waves='light'> Search</Button>
-            </div>
-          </form>
-        </Row>
-      </div>
+      <MuiThemeProvider theme={theme}>
+        <div className='mt-m'>
+          <Row>
+            <form onSubmit={(e)=>this.handleSubmit(e)}>
+              <Input s={6}
+                  onChange={(e,value)=>this.onCurrencyChange(value)}
+                  type='select' 
+                  label='Currency'
+                  defaultValue='All'>
+                <option value='All'>All</option>
+                <SelectionList lists={this.state.currencies} />
+              </Input>
+              <Input s={6}
+                  onChange={(e,value)=>this.onLPChange(value)}
+                  type='select'
+                  label='LP'
+                  defaultValue='All'>
+                <option value='All'>All</option>
+                <SelectionList lists={this.state.lps} />
+              </Input>
+              <div className='center-align'>
+                  <Button variant="contained" 
+                    color="primary"
+                    type="submit">
+                    Search
+                  </Button>
+              </div>
+            </form>
+          </Row>
+        </div>      
+      </MuiThemeProvider>
+
     );
   }
 };
