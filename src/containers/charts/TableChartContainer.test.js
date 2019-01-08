@@ -1,12 +1,12 @@
 import React from 'react';
 import {shallow} from 'enzyme';
-import TableChart from './TableChart';
+import TableChartContainer from './TableChartContainer';
 
 const defaultProps = {data:[]};
 
 const setup = (props={})=>{
   const setupProps = {...defaultProps, ...props};
-  return shallow(<TableChart {...setupProps}/>);
+  return shallow(<TableChartContainer {...setupProps}/>);
 };
 
 it('renders without error', ()=>{

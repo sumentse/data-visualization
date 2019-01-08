@@ -12,12 +12,14 @@ import {
   TablePagination
 } from '@material-ui/core';
 
-class TableChart extends Component {
+class TableChartContainer extends Component {
   constructor(props){
     super();
+    
     this.state = {
-      data: [],
-      count: 0
+      data: props.data,
+      count: 0,
+      rowsPerPage: props.rowsPerPage
     };
 
   }
@@ -49,12 +51,25 @@ class TableChart extends Component {
   }
 
   componentWillReceiveProps(nextProps){
+
     if(JSON.stringify(nextProps) !== JSON.stringify(this.props)){
       this.setState({
         data: nextProps.data,
         count: nextProps.count
       });
     }
+  }
+
+  handleChangePage(event, page){
+    console.log(event,page);
+  }
+
+  handleChangeRowsPerPage(event){
+    const rowsPerPage = Number(event.target.value);
+    this.setState({
+      rowsPerPage
+    });
+    //calls the api in the root and pass the params
   }
   
   render(){
@@ -82,13 +97,19 @@ class TableChart extends Component {
             {this.generateRows()}
           </TableBody>
           <TableFooter>
-            <TablePagination rowsPerPageOptions={[100, 500, 1000]}
-              colSpan={7}
-              count={this.props.count}
-              rowsPerPage={100}
-              onChangePage={this.handleChangePage}
-              page={0}
-            />
+            <TableRow>
+              <TablePagination rowsPerPageOptions={[100, 500, 1000]}
+                colSpan={7}
+                count={this.props.count}
+                onChangePage={(e, pageNo)=>this.handleChangePage(e, pageNo)}
+                onChangeRowsPerPage={(e)=>this.handleChangeRowsPerPage(e)}
+                rowsPerPage={this.state.rowsPerPage}
+                page={this.props.page}
+                SelectProps={{
+                  native: true,
+                }}
+              />
+            </TableRow>
           </TableFooter>
         </Table>
       );
@@ -98,11 +119,11 @@ class TableChart extends Component {
   
 };
 
-TableChart.propTypes = {
+TableChartContainer.propTypes = {
   data: PropTypes.array.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
   count: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired
 };
 
-export default TableChart;
+export default TableChartContainer;

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Button, Row, Input, Icon} from 'react-materialize';
-import SelectionList from './components/SelectionList';
+import {Button, Row, Input} from 'react-materialize';
+import SelectionList from '../components/SelectionList';
 
 
 class FilterBar extends Component {
@@ -10,8 +10,8 @@ class FilterBar extends Component {
     this.state = {
       currencies: [],
       lps: [],
-      currencySelected: 'All',
-      lpSelected: 'All',      
+      currencySelected: props.defaultCurrency,
+      lpSelected: props.defaultLP,      
     };
 
   }
@@ -22,22 +22,6 @@ class FilterBar extends Component {
 
     this.setState({currencies, lps});
 
-  }
-
-  generateCurrencyList(){
-    return this.state.currencies.map((item, index)=>{
-      return (
-        <option key={index} value={item}>{item}</option>
-      );
-    });
-  }
-
-  generateLPList(){
-    return this.state.lps.map((item, index)=>{
-      return (
-        <option key={index} value={item}>{item}</option>
-      );
-    })
   }
 
   onCurrencyChange(value){
@@ -61,6 +45,7 @@ class FilterBar extends Component {
     });
 
     this.props.updateChartData(query);
+    this.props.updateFilterSelection(this.state.currencySelected, this.state.lpSelected);
 
   }
 
