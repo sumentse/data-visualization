@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {FilterConsumer} from '../providers/FilterProvider';
 import PropTypes from 'prop-types';
 import {Button, withStyles, MuiThemeProvider, createMuiTheme} from '@material-ui/core';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
@@ -48,21 +49,29 @@ class VisualizationMenu extends Component {
       <div className="mt-m ml-xs">
         <span>View Chart As:</span>
         <MuiThemeProvider theme={theme}>
-          <Button variant="contained" 
-            color="primary"
-            onClick={()=>this.props.changeChartCallback('table')}
-            className={classes.button}><TableChartIcon className={classes.icons}/> Table
-          </Button>
-          <Button variant="contained" 
-            color="primary" 
-            onClick={()=>this.props.changeChartCallback('line')}
-            className={classes.button}><ShowChartIcon className={classes.icons}/> Line
-          </Button>
-          <Button variant="contained" 
-            color="primary" 
-            onClick={()=>this.props.changeChartCallback('area')}
-            className={classes.button}><ShowChartIcon className={classes.icons}/> Area 
-          </Button>
+          <FilterConsumer>
+          {
+            ({changeGraph})=>(
+              <React.Fragment>          
+                <Button variant="contained" 
+                  color="primary"
+                  onClick={()=>changeGraph('table')}
+                  className={classes.button}><TableChartIcon className={classes.icons}/> Table
+                </Button>
+                <Button variant="contained" 
+                  color="primary" 
+                  onClick={()=>changeGraph('line')}
+                  className={classes.button}><ShowChartIcon className={classes.icons}/> Line
+                </Button>
+                <Button variant="contained" 
+                  color="primary" 
+                  onClick={()=>changeGraph('area')}
+                  className={classes.button}><ShowChartIcon className={classes.icons}/> Area 
+                </Button>
+              </React.Fragment>
+              )
+            }
+          </FilterConsumer>          
         </MuiThemeProvider>
       </div>
     );

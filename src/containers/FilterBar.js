@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {FilterConsumer} from '../providers/FilterProvider';
 import axios from 'axios';
 import {Row, Input} from 'react-materialize';
 import SelectionList from '../components/SelectionList';
@@ -25,18 +26,17 @@ const theme = createMuiTheme({
 });
 
 class FilterBar extends Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       currencies: [],
-      lps: [],
-      currencySelected: props.defaultCurrency,
-      lpSelected: props.defaultLP,      
+      lps: []
     };
 
   }
 
   async componentDidMount() {
+    //get the select lists
     const results = await axios.get('http://localhost:3000/charts/categories');
     const {currency:currencies, lp:lps} = results.data;
 
@@ -44,66 +44,60 @@ class FilterBar extends Component {
 
   }
 
-  onCurrencyChange(value){
-    this.setState({
-      currencySelected: value
-    });
-  }
-
-  onLPChange(value){
-    this.setState({
-      lpSelected: value
-    });
-  }  
-
-  handleSubmit(event){
+  handleSubmit(event, selectedCurrency, selectedLP){
     event.preventDefault();
     
     const query = ({
-      ...(this.state.currencySelected === 'All' || {currency: this.state.currencySelected}),
-      ...(this.state.lpSelected === 'All' || {lp: this.state.lpSelected})
+      ...(selectedCurrency === 'All' || {currency: selectedCurrency}),
+      ...(selectedLP === 'All' || {lp: selectedLP})
     });
 
     this.props.updateChartData(query);
-    this.props.updateFilterSelection(this.state.currencySelected, this.state.lpSelected);
 
   }
 
   render() {
     
     return (
-      <MuiThemeProvider theme={theme}>
-        <div className='mt-m'>
-          <Row>
-            <form onSubmit={(e)=>this.handleSubmit(e)}>
-              <Input s={6}
-                  onChange={(e,value)=>this.onCurrencyChange(value)}
-                  type='select' 
-                  label='Currency'
-                  defaultValue='All'>
-                <option value='All'>All</option>
-                <SelectionList lists={this.state.currencies} />
-              </Input>
-              <Input s={6}
-                  onChange={(e,value)=>this.onLPChange(value)}
-                  type='select'
-                  label='LP'
-                  defaultValue='All'>
-                <option value='All'>All</option>
-                <SelectionList lists={this.state.lps} />
-              </Input>
-              <div className='center-align'>
-                  <Button variant="contained" 
-                    color="primary"
-                    type="submit">
-                    Search
-                  </Button>
-              </div>
-            </form>
-          </Row>
-        </div>      
+      <MuiThemeProvider theme={theme}>  
+        <FilterConsumer>
+          {
+            ({changeCurrency, changeLP, selectedCurrency, selectedLP})=>{
+              return (
+                <div className='mt-m'>
+                  <Row>
+                    <form onSubmit={(e)=>this.handleSubmit(e, selectedCurrency, selectedLP)}>
+                      <Input s={6}
+                          onChange={(e,currency)=>changeCurrency(currency)}
+                          type='select' 
+                          label='Currency'
+                          defaultValue='All'>
+                        <option value='All'>All</option>
+                        <SelectionList lists={this.state.currencies} />
+                      </Input>
+                      <Input s={6}
+                          onChange={(e, value)=>changeLP(value)}
+                          type='select'
+                          label='LP'
+                          defaultValue='All'>
+                        <option value='All'>All</option>
+                        <SelectionList lists={this.state.lps} />
+                      </Input>
+                      <div className='center-align'>
+                        <Button variant="contained" 
+                          color="primary"
+                          type="submit">
+                          Search
+                        </Button>
+                      </div>
+                    </form>
+                  </Row>
+                </div>
+              );
+            }
+          }
+        </FilterConsumer>
       </MuiThemeProvider>
-
     );
   }
 };

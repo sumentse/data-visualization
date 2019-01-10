@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import '../node_modules/css-spaces/dist/spaces.min.css'
 import axios from 'axios';
 import Header from "./components/Header";
@@ -10,6 +9,7 @@ import {
   AreaChartContainer
 } from './containers/charts';
 import FilterBar from './containers/FilterBar';
+import {FilterProvider, FilterConsumer} from './providers/FilterProvider';
 
 class App extends Component {
 
@@ -17,10 +17,7 @@ class App extends Component {
     super();
     this.state = {
       chartData: [],
-      chartType: 'table',
-      paginationData: {},
-      selectedCurrency: 'All',
-      selectedLP: 'All'
+      paginationData: {}
     };
   }
 
@@ -40,36 +37,24 @@ class App extends Component {
     });
   };
 
-  updateFilterSelection(currency, lp){
-    this.setState({
-      selectedCurrency: currency,
-      selectedLP: lp
-    });
-  }
 
-  changeChartType(chartType){
-    this.setState({
-      chartType
-    });
-  }
-
-  generateChart(){
-    
-    switch(this.state.chartType){
+  generateChart(context){
+    const {selectedGraph, selectedCurrency, selectedLP} = context;
+    switch(selectedGraph){
       case 'table':
         return (
           <TableChartContainer data={this.state.chartData} 
             count={this.state.paginationData.totalItems} 
             page={this.state.paginationData.currentPage - 1}
             updateChartDataCallBack={(query,pageSize,page)=>this.updateChartData(query,pageSize,page)}
-            currency={this.state.selectedCurrency}
-            lp={this.state.selectedLP}
+            currency={selectedCurrency}
+            lp={selectedLP}
           rowsPerPage={this.state.paginationData.pageSize}/>
         );
       case 'line':
-        return (<LineChartContainer data={this.state.chartData} currency={this.state.selectedCurrency} lp={this.state.selectedLP}/>);
+        return (<LineChartContainer data={this.state.chartData} currency={selectedCurrency} lp={selectedLP}/>);
       case 'area':
-        return (<AreaChartContainer data={this.state.chartData} currency={this.state.selectedCurrency} lp={this.state.selectedLP}/>);
+        return (<AreaChartContainer data={this.state.chartData} currency={selectedCurrency} lp={selectedLP}/>);
       default:
         return (<div>Something went wrong</div>);
     }
@@ -77,19 +62,22 @@ class App extends Component {
 
   render() {
     return (
-      <div id="App" className="container-fluid">
-        <Header brand="Coding Challege"/>
-        <VisualizationMenu 
-          changeChartCallback={(chartType)=>this.changeChartType(chartType)}
-        />
-        <FilterBar 
-          updateChartData={(query)=>this.updateChartData(query)}
-          defaultCurrency={this.state.selectedCurrency}
-          defaultLP={this.state.selectedLP}
-          updateFilterSelection={(currency,lp) => this.updateFilterSelection(currency,lp)}
-          />
-        {this.state.chartData.length !== 0 ? this.generateChart() : ''}
-      </div>
+      <FilterProvider>
+        <FilterConsumer>
+          {
+            (context)=>(
+              <div id="App" className="container-fluid">
+                <Header brand="Coding Challege"/>
+                <VisualizationMenu/>
+                <FilterBar updateChartData={
+                  (query)=>this.updateChartData(query)}
+                  />
+                {this.state.chartData.length > 0 ? this.generateChart(context) : ''}
+              </div>              
+            )
+          }
+        </FilterConsumer>
+      </FilterProvider>
     );
   }
 }
